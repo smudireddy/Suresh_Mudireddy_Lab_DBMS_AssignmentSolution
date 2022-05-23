@@ -187,6 +187,7 @@ insert into rating(rat_id, ord_id, rat_ratstars) values
     If rating >2 print “Average Service” else print “Poor Service”.
     */
     
+    call DisplaySupplierRatingsAndTypeOfService();
     
     
      
