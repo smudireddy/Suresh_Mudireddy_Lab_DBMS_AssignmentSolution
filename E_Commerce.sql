@@ -160,17 +160,19 @@ insert into rating(rat_id, ord_id, rat_ratstars) values
 		inner join supplier_pricing sp on(o.pricing_id = sp.pricing_id) and o.cus_id = 2
 		inner join product p on(sp.pro_id = p.prod_id);
         
-	-- Display the Supplier details who can supply more than one product.
+	-- 5) Display the Supplier details who can supply more than one product.
     select * from supplier s where s.supp_id in (select sp.supp_id from supplier_pricing sp group by sp.supp_id having count(sp.pro_id) > 1);
     
     -- 6) Find the least expensive product from each category and print the table with category id, name, product name and price of the product
-    select p.cat_id 'Category ID', ca.cat_name 'Category Name', p.pro_name 'Product name', sp.supp_price 'Product Price' from product p 
-		inner join supplier_pricing sp on(p.prod_id = sp.pro_id)
-		inner join category ca on(ca.cat_id = p.cat_id);
         
-    select Category_ID, Category_Name, Product_Name, Product_Price from (select p.cat_id 'Category_ID', ca.cat_name 'Category_Name', p.pro_name 'Product_Name', sp.supp_price 'Product_Price' from product p 
-		inner join supplier_pricing sp on(p.prod_id = sp.pro_id)
-		inner join category ca on(ca.cat_id = p.cat_id)) a where a.Product_Price;
+        select p.cat_id 'Category ID', ca.cat_name 'Category Name', p.pro_name 'Product name', spp.Product_Price  from product p 
+		inner join (
+            select sp.pro_id, MIN(sp.supp_price) as 'Product_Price' from supplier_pricing sp group by sp.pro_id
+        ) as spp on (p.prod_id = spp.pro_id)
+		inner join (
+           select cat_id from product group by cat_id
+        ) as pd on (pd.cat_id = p.cat_id)
+        inner join category ca on(ca.cat_id = p.cat_id);
         
 	-- 7) Display the Id and Name of the Product ordered after “2021-10-05”.
      select p.prod_id 'Product_ID', p.pro_name 'Product_Name' from product p where p.prod_id in (
